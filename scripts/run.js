@@ -1,8 +1,16 @@
 const main = async () => {
+	const [owner, randomPerson] = await hre.ethers.getSigners();
 	const domainContractFactory = await hre.ethers.getContractFactory('Domains');
 	const domainContract = await domainContractFactory.deploy();
 	await domainContract.deployed();
 	console.log('Deployed contract to:', domainContract.address);
+	console.log('Deployed by:', owner.address);
+
+	const txn = await domainContract.register("doom");
+	await txn.wait();
+
+	const domainOwner = await domainContract.getDomainOwnerAddress("doom");
+	console.log("Owner of domain:", domainOwner);
 }
 
 const runMain = async () => {
