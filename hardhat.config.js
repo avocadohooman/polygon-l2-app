@@ -29,5 +29,9 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 			url: process.env.ALCHEMY_URL,
 			accounts: [process.env.RINKEBY_ACCOUNT],
 		},
+		mumbai: {
+			url: process.env.ALCHEMY_URL,
+			accounts: [process.env.RINKEBY_ACCOUNT],
+		},
 	}
 };
