@@ -37,7 +37,10 @@ contract Domains is ERC721URIStorage {
 	*/
 	mapping(string => string) public records;
 
+	address payable public owner;
+
 	constructor(string memory _tld) payable ERC721("Avocado Name Service", "ANS")  {
+		owner = payable(msg.sender);
 		tld = _tld;
 		console.log("%s name service deployed", _tld);
 	}
@@ -128,4 +131,21 @@ contract Domains is ERC721URIStorage {
 	function getRecord(string calldata _requestedRecord) public view returns (string memory) {
 		return records[_requestedRecord];
 	}
+
+	modifier onlyOwner() {
+		require(isOwner());
+		_;
+	}
+
+	function isOwner() public view returns (bool) {
+		return msg.sender == owner;
+	}
+
+	function withdraw() public onlyOwner {
+		uint amount = address(this).balance;
+		
+		(bool success, ) = msg.sender.call{value: amount}("");
+		require(success, "Failed to withdraw Matic");
+	} 
+
 }
