@@ -3,7 +3,6 @@ const main = async () => {
 	const domainContract = await domainContractFactory.deploy("avocado");
 	await domainContract.deployed();
 	console.log('Deployed contract to:', domainContract.address);
-	console.log('Deployed by:', owner.address);
 
 	let txn = await domainContract.register("coding",  {value: hre.ethers.utils.parseEther('0.1')});
 	await txn.wait();
