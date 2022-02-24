@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './styles/App.css';
+import config from './utils/config';
 
 // Constants
+const tld = ".avocado";
 
 const App = () => {
 
 	//Just a state variable we use to store our user's public wallet. Don't forget to import useState at the top.
 	const [currentAccount, setCurrentAccount] = useState('');
+	// Add some state data propertie
+	const [domain, setDomain] = useState('');
+  	const [record, setRecord] = useState('');
 
 	// Implement your connectWallet method here
 	const connectWallet = async () => {
@@ -63,6 +68,37 @@ const App = () => {
 		</div>
 	);
 
+	const renderInputForm = () => {
+		return (
+			<div className="form-container">
+				<div className='first-row'>
+					<input 
+						type="text"
+						value={domain}
+						placeholder='domain'
+						onChange={(e) => setDomain(e.target.value)}
+					/>
+					<p className='tld'> {tld} </p>
+				</div>
+				<input
+					type="text"
+					value={record}
+					placeholder='whats your avocado power'
+					onChange={e => setRecord(e.target.value)}
+				/>
+
+				<div className="button-container">
+					<button className='cta-button mint-button' disabled={null} onClick={null}>
+						Mint
+					</button>  
+					<button className='cta-button mint-button' disabled={null} onClick={null}>
+						Set data
+					</button>  
+				</div>
+			</div>
+		)
+	}
+
 	// This runs our function when the page loads.
 	useEffect(() => {
 		checkIfWalletIsConnected();
@@ -82,8 +118,11 @@ const App = () => {
 					</div>
 
 					{/* Hide the connect button if currentAccount isn't empty*/}
-					{currentAccount && renderNotConnectedContainer()}
+					{!currentAccount && renderNotConnectedContainer()}
+					{/* Render the input form if an account is connected */}
+					{currentAccount && renderInputForm()}
 
+					<div className='footer-container'></div>
 				</div>
 			</div>
 	);
