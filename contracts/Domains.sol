@@ -36,13 +36,33 @@ contract Domains is ERC721URIStorage {
 		a map data type that stores the record of the domains
 	*/
 	mapping(string => string) public records;
+	mapping (uint => string) public domainNames;
 
 	address payable public owner;
+
+	error Unauthorized();
+	error AlreadyRegistered();
+	error InvalidName(string name);
+
 
 	constructor(string memory _tld) payable ERC721("Avocado Name Service", "ANS")  {
 		owner = payable(msg.sender);
 		tld = _tld;
 		console.log("%s name service deployed", _tld);
+	}
+
+	function getAllNames() public view returns (string[] memory) {
+		console.log('getting all domain names from contract');
+		string[] memory allNames = new string[](_tokenIds.current());
+		for (uint i = 0; i < _tokenIds.current(); i++) {
+			allNames[i] = domainNames[i];
+			console.log("Name for token %d is %s", i, allNames[i]);
+		}
+		return allNames;
+	}
+
+	function valid(string calldata name) public pure returns(bool) {
+		return StringUtils.strlen(name) >= 3 && StringUtils.strlen(name) <= 10;
 	}
 
 	/*
@@ -69,7 +89,9 @@ contract Domains is ERC721URIStorage {
 	function register(string calldata _newDomainName) public payable{
 		// Check that the name is unregistered
 		require(domains[_newDomainName] == address(0));
-
+		if (domains[_newDomainName] != address(0)) revert AlreadyRegistered();
+		if (!valid(_newDomainName)) revert InvalidName(_newDomainName);
+	
 		uint _price = priceOfDomain(_newDomainName);
 
 		require(msg.value >= _price, "Not enough matic paid");
@@ -110,6 +132,7 @@ contract Domains is ERC721URIStorage {
 		console.log("--------------------------------------------------------\n");
 
     	_tokenIds.increment();
+		domainNames[newRecordId] = _newDomainName;
 	}
 
 	/*
